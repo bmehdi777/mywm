@@ -1,17 +1,22 @@
 BIN_NAME=mywm
 
-.PHONY: run clean release
+.PHONY: run clean release stop
 
 run:
 	cargo build
-	Xephyr -screen 800x600 :1
-	DISPLAY=:1 ./target/debug/${BIN_NAME}
+	Xephyr -screen 800x600 :1 2> /dev/null &
+	clear
+	sudo DISPLAY=:1 ./target/debug/${BIN_NAME}
 
 release: 
 	cargo build --release
-	Xephyr -screen 800x600 :1
-	DISPLAY=:1 ./target/release/${BIN_NAME}
+	Xephyr -screen 800x600 :1 &
+	clear
+	sudo DISPLAY=:1 ./target/release/${BIN_NAME}
+
+stop:
+	pkill Xephyr
+	while pgrep -x Xephyr >/dev/null; do sleep 1; done
 
 clean:
-	rm ./target
-	echo "Folder ./target/ removed."
+	rm -r ./target
