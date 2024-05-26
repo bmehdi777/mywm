@@ -21,8 +21,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         &CreateWindowAux::new().background_pixel(screen.white_pixel),
     )?;
     conn.map_window(win_id)?;
-    conn.flush();
+    conn.flush()?;
     loop {
-        println!("Event: {:?}", conn.wait_for_event()?);
+        let event = conn.wait_for_event()?;
+        println!("Event: {:?}", event);
     }
 }
