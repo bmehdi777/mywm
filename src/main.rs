@@ -21,9 +21,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         &CreateWindowAux::new().background_pixel(screen.white_pixel),
     )?;
     conn.map_window(win_id)?;
-    conn.flush()?;
-    print_info(&conn, screen_num);
     setup(&conn, screen.root);
+    conn.flush()?; // need to flush to send request to server
+    print_info(&conn, screen_num);
     loop {
         let event = conn.wait_for_event()?;
         println!("Event: {:?}", event);
@@ -44,6 +44,6 @@ fn print_info(conn: &impl Connection, screen_num: usize) {
 fn setup(conn: &impl Connection, wid: u32 ) {
     // XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_STRUCTURE_NOTIFY | XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_FOCUS_CHANGE
     // XCB_CW_EVENT_MASK ?
-    let values = ChangeWindowAttributesAux::default().event_mask(EventMask::SUBSTRUCTURE_REDIRECT | EventMask::SUBSTRUCTURE_NOTIFY | EventMask::STRUCTURE_NOTIFY | EventMask::BUTTON_PRESS | EventMask::FOCUS_CHANGE);
+    let values = ChangeWindowAttributesAux::default().event_mask(EventMask::SUBSTRUCTURE_REDIRECT | EventMask::SUBSTRUCTURE_NOTIFY | EventMask::STRUCTURE_NOTIFY | EventMask::BUTTON_PRESS | EventMask::FOCUS_CHANGE | EventMask::KEY_PRESS);
     conn.change_window_attributes(wid, &values).unwrap();
 }
