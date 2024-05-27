@@ -4,13 +4,15 @@ BIN_NAME=mywm
 
 run:
 	cargo build
-	Xephyr -screen 800x600 :1 2> /dev/null &
+	unset XDG_SEAT
+	Xephyr -br -ac -noreset -screen 800x600 :1 2> /dev/null &
 	clear
 	sudo DISPLAY=:1 ./target/debug/${BIN_NAME}
 
 release: 
 	cargo build --release
-	Xephyr -screen 800x600 :1 &
+	unset XDG_SEAT
+	Xephyr -br -ac -noreset -screen 800x600 :1 &
 	clear
 	sudo DISPLAY=:1 ./target/release/${BIN_NAME}
 
