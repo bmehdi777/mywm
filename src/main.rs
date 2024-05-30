@@ -50,4 +50,5 @@ fn setup(conn: &impl Connection, wid: u32) {
         .event_mask(EventMask::SUBSTRUCTURE_NOTIFY | EventMask::SUBSTRUCTURE_REDIRECT | EventMask::KEY_PRESS);
     conn.change_window_attributes(wid, &values).unwrap();
     conn.grab_key(true, wid, ModMask::ANY, 26, GrabMode::ASYNC, GrabMode::ASYNC).unwrap();
+    conn.intern_atom
 }
