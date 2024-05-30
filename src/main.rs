@@ -20,6 +20,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 conn.map_window(e.window)?;
             }
             Event::KeyPress(e) => {
+                println!("Key press {}", e.detail);
+            }
+            Event::ButtonPress(e) => {
+                println!("Button pressed {}", e.detail);
+            }
+            Event::ClientMessage(message) => {
+                println!("Message received {:?}", message);
             }
             _ => {}
         }
@@ -42,4 +49,5 @@ fn setup(conn: &impl Connection, wid: u32) {
     let values = ChangeWindowAttributesAux::default()
         .event_mask(EventMask::SUBSTRUCTURE_NOTIFY | EventMask::SUBSTRUCTURE_REDIRECT | EventMask::KEY_PRESS);
     conn.change_window_attributes(wid, &values).unwrap();
+    conn.grab_key(true, wid, ModMask::ANY, 26, GrabMode::ASYNC, GrabMode::ASYNC).unwrap();
 }
