@@ -7,5 +7,6 @@ pkgs.mkShell {
 		xorg.xorgserver
 		xorg.xev
 		xorg.xlsatoms
+		feh
 	];
 }

@@ -18,6 +18,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             Event::MapRequest(e) => {
                 println!("Debug event : {:?}", e);
                 conn.map_window(e.window)?;
+                let atom = conn
+                    .intern_atom(true, "WM_NAME".as_bytes())
+                    .unwrap().reply()?;
+                let props = conn.get_property(false, e.window, atom.atom, AtomEnum::STRING, 0, 1024)?.reply()?;
+                println!("Atom _NET_WM_NAME : {:?}", atom);
+                println!("App name : {:?}", std::str::from_utf8(&props.value)?);
             }
             Event::KeyPress(e) => {
                 println!("Key press {}", e.detail);
@@ -46,9 +52,17 @@ fn print_info(conn: &impl Connection, screen_num: usize) {
 }
 
 fn setup(conn: &impl Connection, wid: u32) {
-    let values = ChangeWindowAttributesAux::default()
-        .event_mask(EventMask::SUBSTRUCTURE_NOTIFY | EventMask::SUBSTRUCTURE_REDIRECT | EventMask::KEY_PRESS);
+    let values = ChangeWindowAttributesAux::default().event_mask(
+        EventMask::SUBSTRUCTURE_NOTIFY | EventMask::SUBSTRUCTURE_REDIRECT | EventMask::KEY_PRESS,
+    );
     conn.change_window_attributes(wid, &values).unwrap();
-    conn.grab_key(true, wid, ModMask::ANY, 26, GrabMode::ASYNC, GrabMode::ASYNC).unwrap();
-    conn.intern_atom
+    conn.grab_key(
+        true,
+        wid,
+        ModMask::ANY,
+        26,
+        GrabMode::ASYNC,
+        GrabMode::ASYNC,
+    )
+    .unwrap();
 }
